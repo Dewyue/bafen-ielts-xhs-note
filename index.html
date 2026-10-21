@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英语没退步，分却掉了？先查机考这 3 步</title>
+  <style>
+    :root {
+      --xhs: #ff2442;
+      --text: #333;
+      --sub: #666;
+      --mute: #999;
+      --line: #f0f0f0;
+      --bg: #ebe6df;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, #fff8ee, transparent 60%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .stage {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 32px 16px;
+    }
+
+    .phone {
+      width: min(390px, 100%);
+      height: min(844px, calc(100vh - 48px));
+      background: #fff;
+      border-radius: 36px;
+      box-shadow:
+        0 0 0 10px #1c1c1c,
+        0 0 0 12px #3a3a3a,
+        0 30px 80px rgba(40, 28, 16, 0.28);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .scroller {
+      flex: 1;
+      overflow: auto;
+      overscroll-behavior: contain;
+      padding-bottom: 72px;
+    }
+
+    .notch {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 108px;
+      height: 22px;
+      background: #1c1c1c;
+      border-radius: 12px;
+      z-index: 5;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 36px 16px 10px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: #111;
+    }
+
+    .author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #f6efe4;
+    }
+
+    .name {
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .follow {
+      margin-left: 6px;
+      height: 26px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 13px;
+      background: var(--xhs);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .carousel {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background: #f7f3ec;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+
+    .track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.35s cubic-bezier(.22,.8,.32,1);
+    }
+
+    .track img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      flex: 0 0 100%;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .hit {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 28%;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .hit.prev { left: 0; }
+    .hit.next { right: 0; }
+
+    .pager {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      min-width: 38px;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 11px;
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      font-size: 11px;
+      display: grid;
+      place-items: center;
+    }
+
+    .dots {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .dots i {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.45);
+      display: block;
+    }
+
+    .dots i.on {
+      background: var(--xhs);
+      width: 12px;
+      border-radius: 3px;
+    }
+
+    .body {
+      padding: 14px 16px 8px;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .caption {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #444;
+      white-space: pre-wrap;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      margin-top: 12px;
+    }
+
+    .tags span {
+      color: #13386c;
+      font-size: 13px;
+    }
+
+    .meta {
+      margin-top: 14px;
+      color: var(--mute);
+      font-size: 12px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 18px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--sub);
+      font-size: 13px;
+    }
+
+    .stats b { color: #111; font-weight: 600; }
+
+    .comments {
+      padding: 4px 16px 24px;
+    }
+
+    .comments h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 8px 0 14px;
+    }
+
+    .comment {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .comment .who {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .comment .txt {
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 4px 0;
+    }
+
+    .comment .when {
+      font-size: 11px;
+      color: var(--mute);
+    }
+
+    .avatar.sm { width: 32px; height: 32px; }
+
+    .dock {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 72px;
+      padding: 10px 18px 18px;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .comment-fake {
+      flex: 1;
+      height: 34px;
+      border-radius: 17px;
+      background: #f5f5f5;
+      color: #bbb;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      margin-right: 14px;
+    }
+
+    .acts {
+      display: flex;
+      gap: 16px;
+      color: #111;
+      font-size: 12px;
+    }
+
+    .acts button {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .acts svg { width: 22px; height: 22px; }
+
+    .hint {
+      position: fixed;
+      right: 28px;
+      bottom: 28px;
+      color: #7a6f64;
+      font-size: 13px;
+    }
+
+    .slide-hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--mute);
+      padding: 6px 0 2px;
+    }
+
+    @media (max-width: 720px) {
+      .hint { display: none; }
+      .phone {
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .stage { padding: 0; }
+      .notch { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <article class="phone" aria-label="小红书笔记预览">
+      <div class="notch"></div>
+      <header class="topbar">
+        <button class="icon-btn" aria-label="返回" type="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="author">
+          <img class="avatar" src="05-操作顺了课才值钱.jpg" alt="" />
+          <span class="name">八分雅思咨询</span>
+          <button class="follow" type="button">关注</button>
+        </div>
+        <button class="icon-btn" aria-label="分享" type="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="7" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="17" cy="12" r="1.6" fill="currentColor"/></svg>
+        </button>
+      </header>
+
+      <div class="scroller" id="scroller">
+      <div class="carousel" id="carousel">
+        <div class="track" id="track">
+          <img src="01-封面.jpg" alt="封面：机考丢分最多的不是单词是操作" />
+          <img src="02-感觉会了分却掉了.jpg" alt="感觉会了，分却掉了？" />
+          <img src="03-掉分的其实是这3个操作.jpg" alt="掉分的，其实是这3个操作" />
+          <img src="04-先做这3步再谈技巧.jpg" alt="先做这3步，再谈技巧" />
+          <img src="05-操作顺了课才值钱.jpg" alt="操作顺了，课才值钱" />
+        </div>
+        <button class="hit prev" id="prev" type="button" aria-label="上一张"></button>
+        <button class="hit next" id="next" type="button" aria-label="下一张"></button>
+        <div class="pager"><span id="page">1</span>/5</div>
+        <div class="dots" id="dots"></div>
+      </div>
+      <p class="slide-hint">上滑看标题和正文</p>
+
+      <section class="body">
+        <h1 class="title">英语没退步，分却掉了？先查机考这 3 步</h1>
+        <p class="caption">全面机考后，不少人听力阅读「感觉会了」，分数却往下走——第一反应是英语退步。
+
+💡 为什么会掉分？
+❌ 把纸考习惯直接搬上网考
+❌ 不熟高亮 / 拖选 / 标注
+❌ 不控时，最后几题慌着点
+
+🎯 真正卡人的，常常不是单词，是操作熟练度。
+
+✅ 先做这 3 步
+1️⃣ 摸界面：把高亮、拖选、标记练顺
+2️⃣ 计时练：按真实时长做 1 套
+3️⃣ 再谈题型：操作顺了，再抠技巧
+
+零基础或衔接阶段的宝，别自己硬摸——评论区留言「机考」，对照你现在卡在哪。</p>
+        <div class="tags">
+          <span>#八分雅思</span>
+          <span>#雅思备考</span>
+          <span>#雅思机考</span>
+          <span>#雅思攻略</span>
+          <span>#雅思培训</span>
+          <span>#考雅经历</span>
+          <span>#howto用好AI</span>
+          <span>#雅思听力</span>
+        </div>
+        <p class="meta">编辑于 10-21 · 湖南</p>
+        <div class="stats">
+          <span><b>12</b> 赞</span>
+          <span><b>8</b> 收藏</span>
+          <span><b>1</b> 评论</span>
+        </div>
+      </section>
+
+      <section class="comments">
+        <h2>共 1 条评论</h2>
+        <div class="comment">
+          <img class="avatar sm" src="05-操作顺了课才值钱.jpg" alt="" />
+          <div>
+            <div class="who">想对照的宝</div>
+            <p class="txt">机考</p>
+            <div class="when">1天前 · 重庆</div>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <footer class="dock">
+        <div class="comment-fake">说点什么...</div>
+        <div class="acts">
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12.2 20s-7.2-4.3-9-8.2C1.6 8.4 3.2 5.5 6.3 5.3c1.8-.1 3.4.9 4.3 2.4.9-1.5 2.5-2.5 4.3-2.4 3.1.2 4.7 3.1 3.1 6.5-1.8 3.9-9 8.2-9 8.2z" stroke="currentColor" stroke-width="1.7"/></svg>
+            12
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7 4h10a2 2 0 0 1 2 2v16l-7-4-7 4V6a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.7"/></svg>
+            8
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 18V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 4z" stroke="currentColor" stroke-width="1.7"/></svg>
+            1
+          </button>
+        </div>
+      </footer>
+    </article>
+  </div>
+  <p class="hint">图左右翻页 · 手机里上滑看正文</p>
+
+  <script>
+    const total = 5;
+    let index = 0;
+    const track = document.getElementById("track");
+    const page = document.getElementById("page");
+    const dots = document.getElementById("dots");
+
+    for (let i = 0; i < total; i++) {
+      const el = document.createElement("i");
+      dots.appendChild(el);
+    }
+
+    function render() {
+      track.style.transform = "translateX(" + (-index * 100) + "%)";
+      page.textContent = String(index + 1);
+      [...dots.children].forEach((d, i) => d.classList.toggle("on", i === index));
+    }
+
+    function go(delta) {
+      index = (index + delta + total) % total;
+      render();
+    }
+
+    document.getElementById("prev").addEventListener("click", () => go(-1));
+    document.getElementById("next").addEventListener("click", () => go(1));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") go(-1);
+      if (e.key === "ArrowRight") go(1);
+    });
+
+    let startX = 0;
+    const carousel = document.getElementById("carousel");
+    carousel.addEventListener("pointerdown", (e) => { startX = e.clientX; });
+    carousel.addEventListener("pointerup", (e) => {
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    });
+
+    render();
+  </script>
+</body>
+</html>
